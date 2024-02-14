@@ -6,7 +6,7 @@ import * as actions from "../actions";
 export default function AdminPage() {
   return (
     <div>
-      Admin Login
+      <input type="password" />
     </div>
   );
 }

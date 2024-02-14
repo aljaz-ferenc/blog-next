@@ -6,6 +6,8 @@ import { formatDate, parseString } from "@/utils";
 import { notFound } from "next/navigation";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import type { Metadata } from "next";
+import Spacer from "@/app/components/Spacer";
+import Link from "next/link";
 
 export async function generateMetadata({
   params,
@@ -34,7 +36,7 @@ const dateFormatter = Intl.DateTimeFormat("en-GB", { dateStyle: "full" });
 
 export default async function SinglePost({ params }: SinglePostProps) {
   const { id } = params;
-
+  
   const post = await db.post.findFirst({
     where: {
       id: parseInt(id),
@@ -71,13 +73,15 @@ export default async function SinglePost({ params }: SinglePostProps) {
   };
 
   return (
-    <div className="page-container">
+    <div className="page-container px-10">
       <h1>{post.title}</h1>
       <p className="text-gray-400 italic">
         Published by {post.author} on {formatDate(post.publishedAt)}
       </p>
-      <hr />
+      <Spacer/>
       <Markdown children={parseString(post.body)} components={components} />
+      <Spacer className="my-10"/>
+      <Link href='/posts' className="button-blue">Back to posts</Link>
     </div>
   );
 }
