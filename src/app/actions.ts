@@ -6,7 +6,6 @@ import { redirect } from "next/navigation";
 
 export async function getPosts() {
   const posts = await db.post.findMany();
-  console.log(posts);
   return posts;
 }
 
@@ -16,7 +15,6 @@ export async function getPost({ id }: { id: number }) {
       id: +id,
     },
   });
-  console.log(post);
   return post;
 }
 

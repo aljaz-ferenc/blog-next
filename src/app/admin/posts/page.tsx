@@ -10,7 +10,6 @@ export default async function Posts() {
 
   function handleSelect(e: React.ChangeEvent<HTMLSelectElement>){
     const id = e.target.value
-    console.log(id)
   }
 
   return (
