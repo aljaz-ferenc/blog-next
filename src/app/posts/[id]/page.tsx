@@ -73,9 +73,9 @@ export default async function SinglePost({ params }: SinglePostProps) {
   };
 
   return (
-    <div className="page-container px-10">
-      <h1>{post.title}</h1>
-      <p className="text-gray-400 italic">
+    <div className="page-container">
+      <h1 className="text-4xl">{post.title}</h1>
+      <p className="text-gray-400 italic text-xs">
         Published by {post.author} on {formatDate(post.publishedAt)}
       </p>
       <Spacer/>

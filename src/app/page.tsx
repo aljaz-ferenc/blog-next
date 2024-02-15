@@ -26,20 +26,23 @@ export default async function Home() {
         </div>
         {/* <h1>React Blog</h1> */}
       </div>
-      <div className="w-full h-[400px] overflow-hidden relative">
+      <div className="w-full h-[200px] overflow-hidden relative">
         <img
           src="/background.png"
           alt="background image"
           className="object-cover absolute w-full h-full top-0 left-0"
         />
       </div>
-      <div>
-        <p className="text-5xl font-bold">Hey there, welcome! 👋</p>
+      <div className="mb-10">
+        <p className="text-2xl text-center my-5 font-bold">
+          Hey there, welcome! 👋
+        </p>
         <p>
-          This blog is all about my journey of learning web development, where I
-          share my experiences and insights along the way. I started this blog
-          as a way to document my progress, take notes and share my learnings
-          with others who are also interested in frontend web development.
+          You've stumbled across this blog that is all about my journey of
+          learning web development, where I share my experiences and insights
+          along the way. I started this blog as a way to document my progress,
+          take notes and share my learnings with others who are also interested
+          in frontend web development.
         </p>
         <p>
           It's about the thrill of discovery, the "AHA!" moments, and the sheer
@@ -50,16 +53,13 @@ export default async function Home() {
         </p>
       </div>
       <div className="home__popular">
-        <Link
-          href="/posts"
-          className="button-blue"
-        >
+        <Link href="/posts" className="button-blue">
           Enter
         </Link>
         <div className="block mt-10">
-          <Spacer/>
-          <h2>Most Recent posts</h2>
-          <div className="flex gap-8">
+          <Spacer />
+          <h2 className="mb-5 text-2xl">Most Recent posts</h2>
+          <div className="flex flex-col gap-8">
             {newestPosts.map((post) => (
               <PostCard post={post} />
             ))}

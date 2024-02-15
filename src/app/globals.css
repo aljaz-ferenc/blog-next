@@ -51,15 +51,14 @@ body {
   .button-blue:hover{
     background-color: rgb(37, 99, 235);
   }
-
 }
 
 @layer base {
   h1 {
-    @apply text-5xl font-bold mb-5;
+    @apply text-5xl font-bold;
   }
   h2 {
-    @apply text-3xl font-semibold mt-10 sticky top-0 py-3 background-color;
+    @apply text-2xl font-semibold mt-8 sticky top-0 py-1 background-color;
   }
   h3{
     @apply text-xl font-semibold mt-10 pb-0
@@ -71,12 +70,18 @@ body {
   ol{
     @apply list-decimal list-inside
   }
-  
+
   p {
-    @apply my-5 leading-7 text-balance;
+    @apply my-3 text-sm leading-5 text-balance;
+  }
+  li{
+    @apply my-3 text-sm leading-5 text-balance;
   }
   p code {
     @apply bg-slate-300 font-mono;
+  }
+  pre div code{
+    @apply text-sm !important ;
   }
   li code{
     @apply bg-slate-300 font-mono;
@@ -94,6 +99,6 @@ body {
 
 @layer components {
   .page-container {
-    @apply max-w-[1260px] w-[80%] mx-auto py-10 ;
+    @apply max-w-[1260px] w-[90%] mx-auto py-5 ;
   }
 }
