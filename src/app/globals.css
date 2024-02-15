@@ -72,16 +72,16 @@ body {
   }
 
   p {
-    @apply my-3 text-sm leading-5 text-balance;
+    @apply my-3 text-sm leading-5 md:text-lg;
   }
   li{
-    @apply my-3 text-sm leading-5 text-balance;
+    @apply my-3 text-sm md:text-lg leading-5 text-balance;
   }
   p code {
-    @apply bg-slate-300 font-mono;
+    @apply bg-slate-300 md:text-lg font-mono;
   }
   pre div code{
-    @apply text-sm !important ;
+    @apply text-sm md:text-lg !important ;
   }
   li code{
     @apply bg-slate-300 font-mono;

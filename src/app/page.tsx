@@ -26,7 +26,7 @@ export default async function Home() {
         </div>
         {/* <h1>React Blog</h1> */}
       </div>
-      <div className="w-full h-[200px] overflow-hidden relative">
+      <div className="w-full h-[200px] md:h-[300px] lg:h-[400px] overflow-hidden relative">
         <img
           src="/background.png"
           alt="background image"
@@ -34,7 +34,7 @@ export default async function Home() {
         />
       </div>
       <div className="mb-10">
-        <p className="text-2xl text-center my-5 font-bold">
+        <p className="text-2xl text-center my-5 font-bold md:text-4xl">
           Hey there, welcome! 👋
         </p>
         <p>
@@ -59,7 +59,7 @@ export default async function Home() {
         <div className="block mt-10">
           <Spacer />
           <h2 className="mb-5 text-2xl">Most Recent posts</h2>
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-8 md:flex-row">
             {newestPosts.map((post) => (
               <PostCard post={post} />
             ))}
