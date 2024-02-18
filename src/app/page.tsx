@@ -1,9 +1,10 @@
-// import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import db from "@/db";
 import PostCard from "./components/PostCard";
 import Spacer from "./components/Spacer";
+import {Button} from '@/components/ui/button'
+import { LogIn } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "WebBlog | Welcome",
@@ -19,12 +20,10 @@ export default async function Home() {
   });
 
   return (
-    <main className="page-container">
+    <main className="page-container bg-background">
       <div className="home__image">
         <div className="image__container">
-          {/* <img src={bgImg} alt="" /> */}
         </div>
-        {/* <h1>React Blog</h1> */}
       </div>
       <div className="w-full h-[200px] md:h-[300px] lg:h-[400px] overflow-hidden relative">
         <img
@@ -53,15 +52,18 @@ export default async function Home() {
         </p>
       </div>
       <div className="home__popular">
-        <Link href="/posts" className="button-blue">
+        <Link href="/posts">
+          <Button>
           Enter
+          <LogIn size={20} className="ml-2" />
+          </Button>
         </Link>
         <div className="block mt-10">
           <Spacer />
-          <h2 className="mb-5 text-2xl">Most Recent posts</h2>
+          <h2 className="mb-5 text-2xl">Most recent posts</h2>
           <div className="flex flex-col gap-8 md:flex-row">
             {newestPosts.map((post) => (
-              <PostCard post={post} />
+              <PostCard key={post.id} post={post} />
             ))}
           </div>
         </div>

@@ -1,5 +1,4 @@
 export function parseString(str: string){
-    
     return str.replaceAll(/\\n/g, '&#92;n').replace(/\\"/g, '&#92;"').replace(/\\`/g, '&#92;`').replace(/\\t/g, '&#9;');
 }
 

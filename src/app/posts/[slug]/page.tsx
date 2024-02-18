@@ -8,38 +8,36 @@ import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import type { Metadata } from "next";
 import Spacer from "@/app/components/Spacer";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { MoveLeft } from "lucide-react";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { id: string };
-}): Promise<Metadata> {
-  const id = params.id;
+export async function generateMetadata({params}: SinglePostProps): Promise<Metadata> {
+  const {slug} = params;
 
   const post = await db.post.findFirst({
     where: {
-      id: parseInt(id),
+      slug,
     },
   });
 
   return {
-    title: `WebBlog | ${post?.title}`,
+    title: `WebBlog | ${post?.title || 'Not Found'}`,
   };
 }
 
 interface SinglePostProps {
   params: {
-    id: string;
+    slug: string;
   };
 }
 const dateFormatter = Intl.DateTimeFormat("en-GB", { dateStyle: "full" });
 
 export default async function SinglePost({ params }: SinglePostProps) {
-  const { id } = params;
-  
+  const { slug } = params;
+
   const post = await db.post.findFirst({
     where: {
-      id: parseInt(id),
+      slug,
     },
   });
 
@@ -74,14 +72,18 @@ export default async function SinglePost({ params }: SinglePostProps) {
 
   return (
     <div className="page-container md:mt-5">
+      {slug && <>
       <h1 className="text-4xl">{post.title}</h1>
       <p className="text-gray-400 italic text-xs md:text-sm">
         Published by {post.author} on {formatDate(post.publishedAt)}
       </p>
-      <Spacer/>
+      <Spacer />
       <Markdown children={parseString(post.body)} components={components} />
-      <Spacer className="my-10"/>
-      <Link href='/posts' className="button-blue">Back to posts</Link>
+      <Spacer className="my-10" />
+      <Link href="/posts">
+        <Button><MoveLeft size={20} className={'mr-2'} />Back to Posts</Button>
+      </Link>
+      </>}
     </div>
   );
 }
@@ -92,7 +94,7 @@ export async function generateStaticParams() {
 
   return posts.map((post) => {
     return {
-      id: String(post.id),
+      slug: post.slug,
     };
   });
 }
