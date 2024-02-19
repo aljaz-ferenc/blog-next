@@ -31,8 +31,14 @@ import { useAuth } from "@/context/authContext";
 import { useRouter } from "next/navigation";
 import { Post } from "@prisma/client";
 import LoadingButton from "@/app/components/LoadingButton";
-import { Dialog, DialogDescription, DialogHeader,DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { SquarePen, X} from "lucide-react";
+import {
+  Dialog,
+  DialogDescription,
+  DialogHeader,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { SquarePen, X } from "lucide-react";
 
 interface EditPostFormParams {
   params: {
@@ -43,10 +49,10 @@ interface EditPostFormParams {
 export default function EditPost({ params }: EditPostFormParams) {
   const [post, setPost] = useState<Post>({} as Post);
   const [publishedAt, setPublishedAt] = useState<Date>();
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [isUpdating, setIsUpdating] = useState(false)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const {slug} = params;
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { slug } = params;
   const { isLoggedIn, updatePosts } = useAuth();
   const router = useRouter();
 
@@ -56,7 +62,6 @@ export default function EditPost({ params }: EditPostFormParams) {
     });
     setPublishedAt(post.publishedAt);
   }, []);
-
 
   const formSchema = z.object({
     title: z
@@ -72,8 +77,7 @@ export default function EditPost({ params }: EditPostFormParams) {
       .min(5, { message: "Title must be at least 5 characters" }),
     publishedAt: z.date(),
     body: z.string(),
-  })
-
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -84,218 +88,237 @@ export default function EditPost({ params }: EditPostFormParams) {
       author: post.author,
       imageUrl: post.imageUrl,
       publishedAt: post.publishedAt,
-      body: post.body
+      body: post.body,
     },
   });
 
   function handleUpdatePost(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setIsUpdating(true)
+    e.preventDefault();
+    setIsUpdating(true);
 
-    const formData = new FormData(e.currentTarget)
+    const formData = new FormData(e.currentTarget);
 
-    actions.updatePost(formData, slug)
+    actions
+      .updatePost(formData, slug)
       .then(() => updatePosts())
-      .finally(() => setIsUpdating(false))
+      .finally(() => setIsUpdating(false));
   }
 
   function handleDeletePost() {
-    setIsDeleting(true)
-    actions.deletePost(slug)
-    .then(() => {
-      updatePosts()
-      router.push('/admin/create-post')
-    })
-    .catch(err => console.log(err.message))
-      .finally(() => setIsDeleting(false))
+    setIsDeleting(true);
+    actions
+      .deletePost(slug)
+      .then(() => {
+        updatePosts();
+        router.push("/admin/create-post");
+      })
+      .catch((err) => console.log(err.message))
+      .finally(() => setIsDeleting(false));
   }
 
   if (!isLoggedIn) router.push("/admin-auth");
 
   return (
     <>
-    <Form {...form}>
-      <form
-        onSubmit={handleUpdatePost}
-        className="flex-1 text-black flex justify-between flex-col gap-3 w-full max-w-[600px] "
-      >
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Title"
-                  {...field}
-                  defaultValue={post?.title}
-                />
-              </FormControl>
-              <FormDescription>
-                This is the title of your new blog post
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Description"
-                  {...field}
-                  defaultValue={post?.description}
+      <Form {...form}>
+        <form
+          onSubmit={handleUpdatePost}
+          className="flex-1 text-black flex justify-between flex-col gap-3 w-full max-w-[600px] "
+        >
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Title"
+                    {...field}
+                    defaultValue={post?.title}
                   />
-              </FormControl>
-              <FormDescription>
-                This is the description of your new blog post
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="slug"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Slug</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Slug"
-                  {...field}
-                  defaultValue={post?.slug}
-                  />
-              </FormControl>
-              <FormDescription>
-                This is the slug of your new blog post
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+                </FormControl>
+                <FormDescription>
+                  This is the title of your new blog post
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        <FormField
-          control={form.control}
-          name="author"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Author</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Author"
-                  {...field}
-                  defaultValue={post?.author}
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Description"
+                    {...field}
+                    defaultValue={post?.description}
                   />
-              </FormControl>
-              <FormDescription>
-                This is the author of your new blog post
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="imageUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Image URL</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Image URL"
-                  {...field}
-                  defaultValue={post?.imageUrl}
-                  />
-              </FormControl>
-              <FormDescription>
-                This is the image of your new blog post
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+                </FormControl>
+                <FormDescription>
+                  This is the description of your new blog post
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        <FormField
-          control={form.control}
-          name="publishedAt"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Date of birth</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
+          <FormField
+            control={form.control}
+            name="slug"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Slug</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Slug"
+                    {...field}
+                    defaultValue={post?.slug}
+                  />
+                </FormControl>
+                <FormDescription>
+                  This is the slug of your new blog post
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="author"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Author</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Author"
+                    {...field}
+                    defaultValue={post?.author}
+                  />
+                </FormControl>
+                <FormDescription>
+                  This is the author of your new blog post
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="imageUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Image URL</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Image URL"
+                    {...field}
+                    defaultValue={post?.imageUrl}
+                  />
+                </FormControl>
+                <FormDescription>
+                  This is the image of your new blog post
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="publishedAt"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Date of birth</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-[240px] pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
                         )}
-                        >
-                      {field.value ? (
-                        format(field.value, "PPP")
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP")
                         ) : (
                           <span>Pick a date</span>
-                          )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("1900-01-01")
+                      }
+                      initialFocus
                     />
-                </PopoverContent>
-              </Popover>
-              <FormDescription>
-                Your date of birth is used to calculate your age.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+                  </PopoverContent>
+                </Popover>
+                <FormDescription>
+                  Your date of birth is used to calculate your age.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        <FormField
-          control={form.control}
-          name="body"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Published At</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Body"
-                  {...field}
-                  defaultValue={post?.body}
+          <FormField
+            control={form.control}
+            name="body"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Published At</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Body"
+                    {...field}
+                    defaultValue={post?.body}
                   />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {isUpdating ? (
+            <LoadingButton variant="default" />
+          ) : (
+            <Button type="submit">
+              Update Post
+              <SquarePen size={20} style={{ marginLeft: "1rem" }} />
+            </Button>
           )}
-        />
-        {isUpdating ? <LoadingButton variant='default'/> :<Button type="submit">Update Post<SquarePen size={20} style={{marginLeft: '1rem'}} /></Button>}
-        <Button variant="destructive" onClick={() => setIsDialogOpen(true)} type="button">
-          Delete Post <X size={20} style={{marginLeft: '1rem'}}/>
-        </Button> 
-      </form>
-    </Form>
-            <Dialog open={isDialogOpen}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>You are about to delete this post!</DialogTitle>
-                  <DialogDescription>Are you sure?</DialogDescription>
-                </DialogHeader>
-                {isDeleting ? <LoadingButton variant='destructive'/>:<Button onClick={handleDeletePost} variant='destructive'>Yes, delete</Button>}
-                <Button onClick={() => setIsDialogOpen(false)}>No, cancel</Button>
-              </DialogContent>
-            </Dialog>
-          </>
+          <Button
+            variant="destructive"
+            onClick={() => setIsDialogOpen(true)}
+            type="button"
+          >
+            Delete Post <X size={20} style={{ marginLeft: "1rem" }} />
+          </Button>
+        </form>
+      </Form>
+      <Dialog open={isDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>You are about to delete this post!</DialogTitle>
+            <DialogDescription>Are you sure?</DialogDescription>
+          </DialogHeader>
+          {isDeleting ? (
+            <LoadingButton variant="destructive" />
+          ) : (
+            <Button onClick={handleDeletePost} variant="destructive">
+              Yes, delete
+            </Button>
+          )}
+          <Button onClick={() => setIsDialogOpen(false)}>No, cancel</Button>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

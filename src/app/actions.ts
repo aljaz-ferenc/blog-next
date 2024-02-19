@@ -4,6 +4,7 @@ import db from "@/db";
 import { Post } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+const bcrypt = require("bcryptjs");
 
 export async function getPosts() {
   const posts = await db.post.findMany({
@@ -47,9 +48,7 @@ export async function createPost(formData: CreatePostFormData) {
   redirect("/posts");
 }
 
-export async function updatePost(
-formData: FormData, slugParam: string
-) {
+export async function updatePost(formData: FormData, slugParam: string) {
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const slug = formData.get("slug") as string;
@@ -68,23 +67,22 @@ formData: FormData, slugParam: string
     !publishedAt ||
     !body
   )
-  
-  try {
-    await db.post.update({
-      where: { slug },
-      data: {
-        title,
-        description,
-        slug,
-        author,
-        imageUrl,
-        publishedAt: new Date(publishedAt),
-        body,
-      },
-    });
-  } catch (err: any) {
-    console.log(err.message)
-  }
+    try {
+      await db.post.update({
+        where: { slug },
+        data: {
+          title,
+          description,
+          slug,
+          author,
+          imageUrl,
+          publishedAt: new Date(publishedAt),
+          body,
+        },
+      });
+    } catch (err: any) {
+      console.log(err.message);
+    }
   revalidatePath(`/posts/${slug}`);
   revalidatePath(`/admin/edit`);
   revalidatePath(`/posts/${slug}`);
@@ -131,8 +129,26 @@ export async function getPostsByQuery(query: string): Promise<Post[] | null> {
     return posts;
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.log(err.message)
+      console.log(err.message);
     }
     return null;
+  }
+}
+
+export async function checkAdminPass(input: string) {
+  try {
+    const admin = await db.admin.findFirst();
+    if (!admin) return { isValid: false, message: "Admin not found" };
+    
+    const passIsValid = await bcrypt.compare(input, admin.password);
+    
+    if (passIsValid) return { isValid: true, message: "" };
+    else return {isValid: false,  message: "Password invalid" };
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return { isValid: false, message: err.message };
+    } else {
+      return { isValid: false, message: "Something went wrong checking the password" };
+    }
   }
 }

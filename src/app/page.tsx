@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import db from "@/db";
 import PostCard from "./components/PostCard";
 import Spacer from "./components/Spacer";
-import {Button} from '@/components/ui/button'
+import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -22,8 +22,7 @@ export default async function Home() {
   return (
     <main className="page-container bg-background">
       <div className="home__image">
-        <div className="image__container">
-        </div>
+        <div className="image__container"></div>
       </div>
       <div className="w-full h-[200px] md:h-[300px] lg:h-[400px] overflow-hidden relative">
         <img
@@ -54,8 +53,8 @@ export default async function Home() {
       <div className="home__popular">
         <Link href="/posts">
           <Button>
-          Enter
-          <LogIn size={20} className="ml-2" />
+            Enter
+            <LogIn size={20} className="ml-2" />
           </Button>
         </Link>
         <div className="block mt-10">
