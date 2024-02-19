@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import Spacer from "./Spacer";
 import PostCard from "./PostCard";
-import {motion} from 'framer-motion'
+import { motion } from "framer-motion";
 
 export default function SearchPosts() {
   const [posts, setPosts] = useState([] as Post[]);
@@ -31,16 +31,19 @@ export default function SearchPosts() {
         <Input
           onChange={handleChangeDebounced}
           placeholder="Search..."
+          name="search"
         />
       </div>
       <Spacer className="mb-10 mt-10 " />
-      <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {posts.map((post) => (
-          <motion.div layout key={post.id} >
-          <PostCard post={post} />
-          </motion.div>
-        ))}
-      </div>
+      {posts.length > 0 && (
+        <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {posts.map((post) => (
+            <motion.div layout key={post.id}>
+              <PostCard post={post} />
+            </motion.div>
+          ))}
+        </div>
+      )}
     </>
   );
 }
