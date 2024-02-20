@@ -1,10 +1,14 @@
+
 import Link from "next/link";
 import type { Metadata } from "next";
-import db from "@/db";
+import User from "@/models/User";
 import PostCard from "./components/PostCard";
 import Spacer from "./components/Spacer";
 import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
+import { getRecentPosts } from "./actions";
+import { IPost } from "@/models/Post";
+
 
 export const metadata: Metadata = {
   title: "WebBlog | Welcome",
@@ -12,12 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const newestPosts = await db.post.findMany({
-    take: 2,
-    orderBy: {
-      publishedAt: "desc",
-    },
-  });
+  const posts: IPost[] = JSON.parse(JSON.stringify(await getRecentPosts()))
 
   return (
     <main className="page-container bg-background">
@@ -60,11 +59,11 @@ export default async function Home() {
         <div className="block mt-10">
           <Spacer />
           <h2 className="mb-5 text-2xl">Most recent posts</h2>
-          <div className="flex flex-col gap-8 md:flex-row">
-            {newestPosts.map((post) => (
-              <PostCard key={post.id} post={post} />
+          {posts?.length > 0 && <div className="flex flex-col gap-8 md:flex-row">
+            {posts?.map((post) => (
+              <PostCard key={post._id} post={post} />
             ))}
-          </div>
+          </div>}
         </div>
       </div>
     </main>

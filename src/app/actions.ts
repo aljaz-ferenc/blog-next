@@ -1,154 +1,65 @@
 "use server";
 
-import db from "@/db";
-import { Post } from "@prisma/client";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-const bcrypt = require("bcryptjs");
+import { connectToDatabase } from "@/database";
+import Post, { IPost } from "@/models/Post";
+import User from "@/models/User";
 
-export async function getPosts() {
-  const posts = await db.post.findMany({
-    orderBy: {
-      publishedAt: "desc",
-    },
-  });
-  return posts;
-}
 
-export async function getPost({ id }: { id: number }) {
-  const post = await db.post.findFirst({
-    where: {
-      id: id,
-    },
-  });
-  return post;
-}
-
-type CreatePostFormData = {
-  title: string;
-  description: string;
-  slug: string;
-  author: string;
-  imageUrl: string;
-  publishedAt: Date;
-  body: string;
-};
-
-export async function createPost(formData: CreatePostFormData) {
+export async function getPosts(): Promise<IPost[]> {
   try {
-    await db.post.create({
-      data: formData,
-    });
-  } catch (err: any) {
-    console.log(err.message);
-    return { message: err };
+    await connectToDatabase();
+    const posts: IPost[] = await Post.find().sort({ publishedAt: -1 });
+    if (!posts) throw new Error("Could not get posts");
+    return JSON.parse(JSON.stringify(posts));
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      throw err
+    }
   }
-  revalidatePath(`/admin`);
-  revalidatePath(`/posts`);
-  redirect("/posts");
+  return [];
 }
 
-export async function updatePost(formData: FormData, slugParam: string) {
-  const title = formData.get("title") as string;
-  const description = formData.get("description") as string;
-  const slug = formData.get("slug") as string;
-  const author = formData.get("author") as string;
-  const imageUrl = formData.get("imageUrl") as string;
-  const publishedAt = formData.get("publishedAt") as string;
-  const body = formData.get("body") as string;
 
-  if (
-    !slugParam ||
-    !title ||
-    !description ||
-    !slug ||
-    !author ||
-    !imageUrl ||
-    !publishedAt ||
-    !body
-  )
-    try {
-      await db.post.update({
-        where: { slug },
-        data: {
-          title,
-          description,
-          slug,
-          author,
-          imageUrl,
-          publishedAt: new Date(publishedAt),
-          body,
-        },
-      });
-    } catch (err: any) {
+export async function getRecentPosts(): Promise<IPost[]> {
+  try {
+    await connectToDatabase();
+    const posts: IPost[] = await Post.find().sort({ publishedAt: -1 }).limit(2);
+
+    return JSON.parse(JSON.stringify(posts));
+  } catch (err: unknown) {
+    if (err instanceof Error) {
       console.log(err.message);
     }
-  revalidatePath(`/posts/${slug}`);
-  revalidatePath(`/admin/edit`);
-  revalidatePath(`/posts/${slug}`);
-}
-
-export async function deletePost(slug: string) {
-  try {
-    await db.post.delete({
-      where: {
-        slug,
-      },
-    });
-  } catch (err: any) {
-    console.log(err.message);
+    throw err;
   }
-  revalidatePath("/posts");
-  revalidatePath("/");
-  revalidatePath("/admin/create-post");
-  // redirect(`/admin/create-post`);
 }
 
-export async function getPostBySlug(slug: string): Promise<Post> {
+
+export async function getPostBySlug(slug: string): Promise<IPost> {
   try {
-    const post = await db.post.findFirst({
-      where: { slug },
+    await connectToDatabase();
+    await User.findOne()
+    const post = await Post.findOne({ slug }).populate({
+      path: "author",
+      select: ["firstName", "lastName", "_id"],
     });
+    
     if (!post) throw new Error("Post not found");
-
-    return post;
+    return JSON.parse(JSON.stringify(post));
   } catch (err: unknown) {
-    redirect("/admin/posts");
+    throw err;
   }
 }
 
-export async function getPostsByQuery(query: string): Promise<Post[] | null> {
-  let posts: Post[];
-
+export async function getPostsByQuery(query: string): Promise<IPost[]> {
   try {
-    posts = await db.post.findMany({
-      where: {
-        title: { contains: query },
-      },
+    await connectToDatabase();
+    const posts = await Post.find({
+      title: { $regex: query, $options: "i" },
     });
-    return posts;
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      console.log(err.message);
-    }
-    return null;
-  }
-}
 
-export async function checkAdminPass(input: string) {
-  try {
-    const admin = await db.admin.findFirst();
-    if (!admin) return { isValid: false, message: "Admin not found" };
-    
-    const passIsValid = await bcrypt.compare(input, admin.password);
-    
-    if (passIsValid) return { isValid: true, message: "" };
-    else return {isValid: false,  message: "Password invalid" };
+    return JSON.parse(JSON.stringify(posts));
   } catch (err: unknown) {
-    if (err instanceof Error) {
-      return { isValid: false, message: err.message };
-    } else {
-      return { isValid: false, message: "Something went wrong checking the password" };
-    }
+    throw err;
   }
 }

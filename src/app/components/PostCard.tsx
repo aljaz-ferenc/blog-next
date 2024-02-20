@@ -5,12 +5,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Post } from "@prisma/client";
+import { IPost } from "@/models/Post";
 import Image from "next/image";
 import Link from "next/link";
 
 type PostCardProps = {
-  post: Post;
+  post: IPost ;
 };
 
 export default function PostCard({ post }: PostCardProps) {
@@ -21,7 +21,7 @@ export default function PostCard({ post }: PostCardProps) {
     >
       <Card className="h-full relative flex px-3 bg-primary-foreground">
           <Image
-            src={`/icons/${post.imageUrl}`}
+            src={`/icons/${post.image}`}
             height={50}
             width={50}
             className="self-center"
