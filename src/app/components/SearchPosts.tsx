@@ -8,15 +8,18 @@ import Spacer from "./Spacer";
 import PostCard from "./PostCard";
 import { motion } from "framer-motion";
 import { IPost } from "@/models/Post";
+import PostCardSkeleton from "./PostCardSkeleton";
 
 export default function SearchPosts() {
   const [posts, setPosts] = useState([] as IPost[]);
+  const [isFetching, setIsFetching] = useState(true)
 
   useEffect(() => {
+    setIsFetching(true)
     getPosts().then((posts) => {
       if (!posts) throw new Error("Could not get posts");
       setPosts(posts);
-    });
+    }).finally(() => setIsFetching(false))
   }, []);
 
   const handleChangeDebounced = useDebounce(handleChange, 500);
@@ -44,7 +47,7 @@ export default function SearchPosts() {
         />
       </div>
       <Spacer className="mb-10 mt-10 " />
-      {posts.length > 0 && (
+      {!isFetching && posts.length > 0 && (
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {posts.map((post) => (
             <motion.div layout key={`${post._id}`}>
@@ -53,6 +56,14 @@ export default function SearchPosts() {
           ))}
         </div>
       )}
+      {isFetching && 
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        {new Array(14).fill('').map(() => (
+          <PostCardSkeleton/>
+        ))}
+      </div>
+      }
     </>
   );
 }
